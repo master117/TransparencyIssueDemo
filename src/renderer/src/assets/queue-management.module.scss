@@ -1,0 +1,280 @@
+/* Queue Management Component Styles */
+.queueManagement {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+
+  h3 {
+    margin: 0;
+    color: #333;
+  }
+}
+
+.queueStats {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+
+  span {
+    padding: 4px 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
+  }
+
+  .open {
+    color: #28a745;
+    font-weight: bold;
+  }
+
+  .closed {
+    color: #dc3545;
+    font-weight: bold;
+  }
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.toggleBtn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+
+  &.openBtn {
+    background-color: #dc3545;
+    color: white;
+
+    &:hover {
+      background-color: #c82333;
+    }
+  }
+
+  &.closedBtn {
+    background-color: #28a745;
+    color: white;
+
+    &:hover {
+      background-color: #218838;
+    }
+  }
+}
+
+.clearBtn {
+  padding: 8px 16px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+
+  &:hover:not(:disabled) {
+    background-color: #5a6268;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.settings {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+
+  h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+  }
+}
+
+.settingGroup {
+  margin-bottom: 15px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  input[type="checkbox"] {
+    margin-right: 8px;
+  }
+
+  input[type="text"],
+  input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+}
+
+.queueList {
+  h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+  }
+}
+
+.emptyQueue {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 40px 20px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.queueItems {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.queueItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: move;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #e9ecef;
+    border-color: #9146ff;
+  }
+
+  &.selected {
+    border-color: #9146ff;
+    background: #f3f0ff;
+  }
+
+  &.playing {
+    background: #d4edda;
+    border-color: #28a745;
+
+    &:hover {
+      background: #c3e6cb;
+    }
+
+    &.selected {
+      background: #b8dcc8;
+    }
+  }
+}
+
+.position {
+  font-weight: bold;
+  font-size: 18px;
+  color: #9146ff;
+  min-width: 40px;
+  text-align: center;
+}
+
+.userInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.username {
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.message {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 6px;
+  word-wrap: break-word;
+}
+
+.timeInfo {
+  display: flex;
+  gap: 15px;
+  font-size: 12px;
+  color: #888;
+
+  span {
+    background: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.playBtn,
+.stopBtn,
+.removeBtn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.playBtn {
+  background-color: #28a745;
+  color: white;
+
+  &:hover {
+    background-color: #218838;
+  }
+}
+
+.stopBtn {
+  background-color: #ffc107;
+  color: #212529;
+
+  &:hover {
+    background-color: #e0a800;
+  }
+}
+
+.removeBtn {
+  background-color: #dc3545;
+  color: white;
+
+  &:hover {
+    background-color: #c82333;
+  }
+}
