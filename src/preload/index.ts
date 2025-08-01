@@ -1,8 +1,12 @@
-import { contextBridge } from "electron";
+import { contextBridge, ipcRenderer } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
 
 // Custom APIs for renderer
-const api = {};
+const api = {
+    getConfigPath: () => ipcRenderer.invoke("get-config-path"),
+    readConfigFile: () => ipcRenderer.invoke("read-config-file"),
+    writeConfigFile: (data: string) => ipcRenderer.invoke("write-config-file", data),
+};
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

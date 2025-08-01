@@ -4,6 +4,7 @@ import styles from "../assets/twitch-chat.module.scss";
 import QueueManagement from "./QueueManagement";
 import { useQueue } from "../hooks/useQueue";
 import { QueueCommand } from "../types/queue";
+import { configService } from "../services/configService";
 
 interface ChatMessage {
     id: string;
@@ -20,6 +21,7 @@ const TwitchChat: React.FC = () => {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [client, setClient] = useState<tmi.Client | null>(null);
     const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected");
+    const [saveCredentials, setSaveCredentials] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Queue management
@@ -28,6 +30,27 @@ const TwitchChat: React.FC = () => {
     // Use ref to ensure message handler always has the latest processCommand
     const processCommandRef = useRef(processCommand);
     processCommandRef.current = processCommand;
+
+    // Initialize config service and load settings
+    useEffect(() => {
+        const initializeConfig = async () => {
+            try {
+                await configService.initialize();
+                const twitchConfig = configService.getTwitchConfig();
+                const queueConfig = configService.getQueueConfig();
+
+                // Load saved credentials
+                setBotUsername(twitchConfig.username);
+                setAccessToken(twitchConfig.accessToken);
+                setChannel(twitchConfig.channel);
+                setSaveCredentials(queueConfig.saveCredentials);
+            } catch (error) {
+                console.error("Failed to initialize config:", error);
+            }
+        };
+
+        initializeConfig();
+    }, []);
 
     // Queue command processing
     const parseQueueCommand = (message: string, username: string): QueueCommand | null => {
@@ -97,10 +120,11 @@ const TwitchChat: React.FC = () => {
             // If access token is provided, add identity
             if (accessToken && accessToken.trim()) {
                 const token = accessToken.replace("oauth:", "").trim();
+                const username = botUsername.trim() || `bot_${Math.floor(Math.random() * 100000)}`;
                 clientConfig = {
                     ...baseConfig,
                     identity: {
-                        username: `${botUsername}`,
+                        username: username,
                         password: `oauth:${token}`,
                     },
                 };
@@ -151,12 +175,27 @@ const TwitchChat: React.FC = () => {
                 setMessages((prev) => [...prev, newMessage]);
             });
 
-            twitchClient.on("connected", () => {
+            twitchClient.on("connected", async () => {
                 setIsConnected(true);
                 if (accessToken && accessToken.trim()) {
                     setConnectionStatus("Connected and authenticated (can send messages)");
                 } else {
                     setConnectionStatus("Connected anonymously (read-only mode)");
+                }
+
+                // Save credentials to config if saveCredentials is enabled
+                try {
+                    const queueConfig = configService.getQueueConfig();
+                    if (queueConfig.saveCredentials) {
+                        await configService.updateTwitchConfig({
+                            username: botUsername.trim() || "",
+                            accessToken: accessToken.trim() || "",
+                            channel: channel.trim() || "",
+                        });
+                        console.log("Credentials saved to config");
+                    }
+                } catch (error) {
+                    console.warn("Failed to save credentials:", error);
                 }
             });
 
@@ -224,6 +263,15 @@ const TwitchChat: React.FC = () => {
 
     const clearMessages = (): void => {
         setMessages([]);
+    };
+
+    const handleSaveCredentialsChange = async (enabled: boolean): Promise<void> => {
+        setSaveCredentials(enabled);
+        try {
+            await configService.updateQueueConfig({ saveCredentials: enabled });
+        } catch (error) {
+            console.error("Failed to save credentials setting:", error);
+        }
     };
 
     return (
@@ -302,6 +350,16 @@ const TwitchChat: React.FC = () => {
                     <p>
                         <strong>Status:</strong> {connectionStatus}
                     </p>
+                </div>
+
+                <div className={styles.configOptions}>
+                    <h4>Configuration Options</h4>
+                    <div className={styles.checkboxGroup}>
+                        <label>
+                            <input type="checkbox" checked={saveCredentials} onChange={(e) => handleSaveCredentialsChange(e.target.checked)} />
+                            Save credentials to config file
+                        </label>
+                    </div>
                 </div>
             </div>
 

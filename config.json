@@ -1,0 +1,12 @@
+{
+    "twitch": {
+        "username": "",
+        "accessToken": "",
+        "channel": "",
+        "clientId": ""
+    },
+    "queue": {
+        "autoConnect": false,
+        "saveCredentials": true
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "twitch": {
+        "username": "your_bot_username",
+        "accessToken": "your_twitch_access_token",
+        "channel": "target_channel_name",
+        "clientId": "your_twitch_client_id"
+    },
+    "queue": {
+        "autoConnect": false,
+        "saveCredentials": true
+    }
+}

@@ -1,5 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { join } from "path";
+import { readFileSync, writeFileSync, existsSync } from "fs";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 
@@ -51,6 +52,49 @@ app.whenReady().then(() => {
 
     // IPC test
     ipcMain.on("ping", () => console.log("pong"));
+
+    // Config file handling
+    const configPath = join(app.getPath("userData"), "config.json");
+
+    ipcMain.handle("get-config-path", () => {
+        return configPath;
+    });
+
+    ipcMain.handle("read-config-file", () => {
+        try {
+            if (existsSync(configPath)) {
+                return readFileSync(configPath, "utf-8");
+            } else {
+                // Return default config if file doesn't exist
+                const defaultConfig = {
+                    twitch: {
+                        username: "",
+                        accessToken: "",
+                        channel: "",
+                        clientId: "",
+                    },
+                    queue: {
+                        autoConnect: false,
+                        saveCredentials: true,
+                    },
+                };
+                return JSON.stringify(defaultConfig, null, 2);
+            }
+        } catch (error) {
+            console.error("Failed to read config file:", error);
+            throw error;
+        }
+    });
+
+    ipcMain.handle("write-config-file", (_, data: string) => {
+        try {
+            writeFileSync(configPath, data, "utf-8");
+            return true;
+        } catch (error) {
+            console.error("Failed to write config file:", error);
+            throw error;
+        }
+    });
 
     createWindow();
 
