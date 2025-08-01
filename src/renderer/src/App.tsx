@@ -5,7 +5,7 @@ function App(): React.JSX.Element {
         <>
             <div className="app-container">
                 <h1>RunaQueue Tool</h1>
-                <p>Manager a queue of Twitch viewers!</p>
+                <p>Manage a queue of Twitch viewers!</p>
                 <TwitchChat />
             </div>
         </>

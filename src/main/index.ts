@@ -4,9 +4,12 @@ import { readFileSync, writeFileSync, existsSync } from "fs";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 
+let mainWindow: BrowserWindow | null = null;
+let popoutWindow: BrowserWindow | null = null;
+
 function createWindow(): void {
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 900,
         height: 670,
         show: false,
@@ -19,7 +22,7 @@ function createWindow(): void {
     });
 
     mainWindow.on("ready-to-show", () => {
-        mainWindow.show();
+        mainWindow?.show();
     });
 
     mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -33,6 +36,54 @@ function createWindow(): void {
         mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
     } else {
         mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
+    }
+}
+
+function createPopoutWindow(): void {
+    console.log("Creating popout window...");
+    
+    if (popoutWindow) {
+        console.log("Popout window already exists, focusing...");
+        popoutWindow.focus();
+        return;
+    }
+
+    popoutWindow = new BrowserWindow({
+        width: 400,
+        height: 600,
+        frame: false,
+        transparent: true,
+        alwaysOnTop: true,
+        resizable: true,
+        minimizable: false,
+        maximizable: false,
+        webPreferences: {
+            preload: join(__dirname, "../preload/index.js"),
+            sandbox: false,
+        },
+    });
+
+    console.log("Popout window created");
+
+    popoutWindow.on("closed", () => {
+        console.log("Popout window closed");
+        popoutWindow = null;
+    });
+
+    popoutWindow.on("ready-to-show", () => {
+        console.log("Popout window ready to show");
+        popoutWindow?.show();
+    });
+
+    // Load the popout HTML file
+    if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
+        const popoutUrl = `${process.env["ELECTRON_RENDERER_URL"]}/popout.html`;
+        console.log("Loading popout URL (dev):", popoutUrl);
+        popoutWindow.loadURL(popoutUrl);
+    } else {
+        const popoutPath = join(__dirname, "../renderer/popout.html");
+        console.log("Loading popout file (prod):", popoutPath);
+        popoutWindow.loadFile(popoutPath);
     }
 }
 
@@ -87,6 +138,13 @@ app.whenReady().then(() => {
                             positionMessage: "{username}, you are position {position} in the queue. Wait time: {waitTime} minutes.",
                             requireMessageText: "{username}, please provide a message when joining the queue. Example: !join YourGameUsername",
                             maxQueueSize: 50,
+                            popoutSettings: {
+                                enabled: false,
+                                displayCount: 5,
+                                showPosition: true,
+                                showMessage: true,
+                                showWaitTime: false,
+                            },
                         },
                     },
                 };
@@ -105,6 +163,38 @@ app.whenReady().then(() => {
         } catch (error) {
             console.error("Failed to write config file:", error);
             throw error;
+        }
+    });
+
+    // Popout window handlers
+    ipcMain.handle("open-popout-window", () => {
+        console.log("Received request to open popout window");
+        createPopoutWindow();
+        return true;
+    });
+
+    ipcMain.handle("close-popout-window", () => {
+        console.log("Received request to close popout window");
+        if (popoutWindow) {
+            popoutWindow.close();
+            popoutWindow = null;
+        }
+        return true;
+    });
+
+    ipcMain.handle("update-popout-queue", (_, queueData) => {
+        console.log("Updating popout queue data");
+        if (popoutWindow && !popoutWindow.isDestroyed()) {
+            popoutWindow.webContents.send("queue-update", queueData);
+        }
+        return true;
+    });
+
+    ipcMain.on("request-queue-data", () => {
+        console.log("Request for queue data from popout");
+        // Forward request to main window
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send("request-queue-data-from-popout");
         }
     });
 

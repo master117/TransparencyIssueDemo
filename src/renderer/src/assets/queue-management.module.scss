@@ -138,6 +138,39 @@
     }
 }
 
+.rangeInput {
+    width: 100%;
+    margin-top: 5px;
+    height: 6px;
+    border-radius: 3px;
+    background: #ddd;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+
+    &:hover {
+        opacity: 1;
+    }
+
+    &::-webkit-slider-thumb {
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #9146ff;
+        cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #9146ff;
+        cursor: pointer;
+        border: none;
+    }
+}
+
 .queueList {
     h4 {
         margin: 0 0 15px 0;
@@ -277,5 +310,26 @@
 
     &:hover {
         background-color: #c82333;
+    }
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.popoutBtn {
+    padding: 8px 16px;
+    background-color: #9146ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #7c3aed;
     }
 }

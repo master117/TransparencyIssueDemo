@@ -19,6 +19,14 @@ export interface QueueSettings {
     positionMessage: string;
     requireMessageText: string;
     maxQueueSize?: number;
+    popoutSettings: {
+        enabled: boolean;
+        displayCount: number;
+        showPosition: boolean;
+        showMessage: boolean;
+        showWaitTime: boolean;
+        backgroundOpacity: number;
+    };
 }
 
 export interface QueueCommand {

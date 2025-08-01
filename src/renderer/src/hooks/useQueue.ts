@@ -13,6 +13,14 @@ const DEFAULT_SETTINGS: QueueSettings = {
     positionMessage: "{username}, you are position {position} in the queue. Wait time: {waitTime} minutes.",
     requireMessageText: "{username}, please provide a message when joining the queue. Example: !join YourGameUsername",
     maxQueueSize: 50,
+    popoutSettings: {
+        enabled: false,
+        displayCount: 5,
+        showPosition: true,
+        showMessage: true,
+        showWaitTime: false,
+        backgroundOpacity: 0.7,
+    },
 };
 
 export { DEFAULT_SETTINGS };

@@ -207,6 +207,151 @@ const QueueManagement: React.FC<QueueManagementProps> = ({
                         placeholder="Use {username} as placeholder"
                     />
                 </div>
+
+                <div className={styles.settingGroup}>
+                    <h4>Popout Window Settings</h4>
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={settings.popoutSettings.enabled}
+                            onChange={(e) =>
+                                onUpdateSettings({
+                                    popoutSettings: { ...settings.popoutSettings, enabled: e.target.checked },
+                                })
+                            }
+                        />
+                        Enable queue popout window
+                    </label>
+                </div>
+
+                {settings.popoutSettings.enabled && (
+                    <>
+                        <div className={styles.settingGroup}>
+                            <label htmlFor="displayCount">Number of users to display:</label>
+                            <input
+                                id="displayCount"
+                                type="number"
+                                value={settings.popoutSettings.displayCount}
+                                onChange={(e) =>
+                                    onUpdateSettings({
+                                        popoutSettings: {
+                                            ...settings.popoutSettings,
+                                            displayCount: Math.max(1, parseInt(e.target.value) || 1),
+                                        },
+                                    })
+                                }
+                                min="1"
+                                max="50"
+                            />
+                        </div>
+
+                        <div className={styles.settingGroup}>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={settings.popoutSettings.showPosition}
+                                    onChange={(e) =>
+                                        onUpdateSettings({
+                                            popoutSettings: { ...settings.popoutSettings, showPosition: e.target.checked },
+                                        })
+                                    }
+                                />
+                                Show position numbers
+                            </label>
+                        </div>
+
+                        <div className={styles.settingGroup}>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={settings.popoutSettings.showMessage}
+                                    onChange={(e) =>
+                                        onUpdateSettings({
+                                            popoutSettings: { ...settings.popoutSettings, showMessage: e.target.checked },
+                                        })
+                                    }
+                                />
+                                Show user messages
+                            </label>
+                        </div>
+
+                        <div className={styles.settingGroup}>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={settings.popoutSettings.showWaitTime}
+                                    onChange={(e) =>
+                                        onUpdateSettings({
+                                            popoutSettings: { ...settings.popoutSettings, showWaitTime: e.target.checked },
+                                        })
+                                    }
+                                />
+                                Show wait times
+                            </label>
+                        </div>
+
+                        <div className={styles.settingGroup}>
+                            <label>
+                                Background Opacity: {Math.round(settings.popoutSettings.backgroundOpacity * 100)}%
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.1"
+                                    value={settings.popoutSettings.backgroundOpacity}
+                                    onChange={(e) =>
+                                        onUpdateSettings({
+                                            popoutSettings: {
+                                                ...settings.popoutSettings,
+                                                backgroundOpacity: parseFloat(e.target.value),
+                                            },
+                                        })
+                                    }
+                                    className={styles.rangeInput}
+                                />
+                            </label>
+                        </div>
+
+                        <div className={styles.buttonGroup}>
+                            <button
+                                onClick={async () => {
+                                    console.log("Opening popout window...");
+                                    try {
+                                        if (window.api && window.api.openPopoutWindow) {
+                                            await window.api.openPopoutWindow();
+                                            console.log("Popout window opened successfully");
+                                        } else {
+                                            console.error("API not available");
+                                        }
+                                    } catch (error) {
+                                        console.error("Failed to open popout window:", error);
+                                    }
+                                }}
+                                className={styles.popoutBtn}
+                            >
+                                Open Popout Window
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    console.log("Closing popout window...");
+                                    try {
+                                        if (window.api && window.api.closePopoutWindow) {
+                                            await window.api.closePopoutWindow();
+                                            console.log("Popout window closed successfully");
+                                        } else {
+                                            console.error("API not available");
+                                        }
+                                    } catch (error) {
+                                        console.error("Failed to close popout window:", error);
+                                    }
+                                }}
+                                className={styles.popoutBtn}
+                            >
+                                Close Popout Window
+                            </button>
+                        </div>
+                    </>
+                )}
             </div>
 
             <div className={styles.queueList}>

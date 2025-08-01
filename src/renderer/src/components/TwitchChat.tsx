@@ -56,6 +56,21 @@ const TwitchChat: React.FC = () => {
         initializeConfig();
     }, []);
 
+    // Send queue updates to popout window
+    useEffect(() => {
+        const sendQueueUpdate = async (): Promise<void> => {
+            if (settings.popoutSettings.enabled && window.api) {
+                try {
+                    await window.api.updatePopoutQueue({ queue, settings });
+                } catch (error) {
+                    console.error("Failed to update popout queue:", error);
+                }
+            }
+        };
+
+        sendQueueUpdate();
+    }, [queue, settings]);
+
     // Queue command processing
     const parseQueueCommand = (message: string, username: string): QueueCommand | null => {
         const trimmed = message.trim().toLowerCase();
