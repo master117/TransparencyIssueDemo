@@ -3,7 +3,7 @@ import tmi from "tmi.js";
 import styles from "../assets/twitch-chat.module.scss";
 import QueueManagement from "./QueueManagement";
 import { useQueue } from "../hooks/useQueue";
-import { QueueCommand } from "../types/queue";
+import { QueueCommand, QueueSettings } from "../types/queue";
 import { configService } from "../services/configService";
 
 interface ChatMessage {
@@ -22,10 +22,11 @@ const TwitchChat: React.FC = () => {
     const [client, setClient] = useState<tmi.Client | null>(null);
     const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected");
     const [saveCredentials, setSaveCredentials] = useState(true);
+    const [queueSettings, setQueueSettings] = useState<QueueSettings | undefined>(undefined);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Queue management
-    const { queue, settings, processCommand, moveUser, markAsPlaying, markAsNotPlaying, removeUser, clearQueue, updateSettings } = useQueue();
+    const { queue, settings, processCommand, moveUser, markAsPlaying, markAsNotPlaying, removeUser, clearQueue, updateSettings } = useQueue(queueSettings);
 
     // Use ref to ensure message handler always has the latest processCommand
     const processCommandRef = useRef(processCommand);
@@ -33,7 +34,7 @@ const TwitchChat: React.FC = () => {
 
     // Initialize config service and load settings
     useEffect(() => {
-        const initializeConfig = async () => {
+        const initializeConfig = async (): Promise<void> => {
             try {
                 await configService.initialize();
                 const twitchConfig = configService.getTwitchConfig();
@@ -44,6 +45,9 @@ const TwitchChat: React.FC = () => {
                 setAccessToken(twitchConfig.accessToken);
                 setChannel(twitchConfig.channel);
                 setSaveCredentials(queueConfig.saveCredentials);
+                
+                // Load queue settings
+                setQueueSettings(queueConfig.settings);
             } catch (error) {
                 console.error("Failed to initialize config:", error);
             }
@@ -274,6 +278,15 @@ const TwitchChat: React.FC = () => {
         }
     };
 
+    const handleQueueSettingsUpdate = async (newSettings: Partial<QueueSettings>): Promise<void> => {
+        updateSettings(newSettings);
+        try {
+            await configService.updateQueueSettings(newSettings);
+        } catch (error) {
+            console.error("Failed to save queue settings:", error);
+        }
+    };
+
     return (
         <div className={styles.twitchChat}>
             <h2>Twitch Chat Reader</h2>
@@ -393,7 +406,7 @@ const TwitchChat: React.FC = () => {
                 onMarkAsNotPlaying={markAsNotPlaying}
                 onRemoveUser={removeUser}
                 onClearQueue={clearQueue}
-                onUpdateSettings={updateSettings}
+                onUpdateSettings={handleQueueSettingsUpdate}
             />
         </div>
     );

@@ -14,6 +14,10 @@ export interface QueueSettings {
     leaveMessage: string;
     queueFullMessage: string;
     queueClosedMessage: string;
+    alreadyInQueueMessage: string;
+    notInQueueMessage: string;
+    positionMessage: string;
+    requireMessageText: string;
     maxQueueSize?: number;
 }
 

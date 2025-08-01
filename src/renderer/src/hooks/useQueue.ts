@@ -8,10 +8,16 @@ const DEFAULT_SETTINGS: QueueSettings = {
     leaveMessage: "{username} has left the queue.",
     queueFullMessage: "The queue is currently full. Please try again later.",
     queueClosedMessage: "The queue is currently closed.",
+    alreadyInQueueMessage: "{username}, you are already in the queue at position {position}.",
+    notInQueueMessage: "{username}, you are not in the queue.",
+    positionMessage: "{username}, you are position {position} in the queue. Wait time: {waitTime} minutes.",
+    requireMessageText: "{username}, please provide a message when joining the queue. Example: !join YourGameUsername",
     maxQueueSize: 50,
 };
 
-export const useQueue = (): {
+export { DEFAULT_SETTINGS };
+
+export const useQueue = (initialSettings?: Partial<QueueSettings>): {
     queue: QueueEntry[];
     settings: QueueSettings;
     processCommand: (command: QueueCommand) => string;
@@ -23,7 +29,10 @@ export const useQueue = (): {
     updateSettings: (newSettings: Partial<QueueSettings>) => void;
 } => {
     const [queue, setQueue] = useState<QueueEntry[]>([]);
-    const [settings, setSettings] = useState<QueueSettings>(DEFAULT_SETTINGS);
+    const [settings, setSettings] = useState<QueueSettings>({
+        ...DEFAULT_SETTINGS,
+        ...initialSettings,
+    });
 
     const findUserInQueue = useCallback(
         (username: string): QueueEntry | undefined => {
@@ -53,11 +62,11 @@ export const useQueue = (): {
             const existingUser = queue.find((entry) => entry.username.toLowerCase() === username.toLowerCase());
             if (existingUser) {
                 const position = queue.findIndex((entry) => entry.username.toLowerCase() === username.toLowerCase()) + 1;
-                return `${username}, you are already in the queue at position ${position}.`;
+                return settings.alreadyInQueueMessage.replace("{username}", username).replace("{position}", position.toString());
             }
 
             if (settings.requireMessage && !message?.trim()) {
-                return `${username}, please provide a message when joining the queue. Example: !join YourGameUsername`;
+                return settings.requireMessageText.replace("{username}", username);
             }
 
             const newEntry: QueueEntry = {
@@ -73,36 +82,49 @@ export const useQueue = (): {
 
             return settings.joinMessage.replace("{username}", username).replace("{position}", position.toString());
         },
-        [queue, settings]
+        [
+            queue,
+            settings.isOpen,
+            settings.maxQueueSize,
+            settings.queueFullMessage,
+            settings.queueClosedMessage,
+            settings.alreadyInQueueMessage,
+            settings.requireMessage,
+            settings.requireMessageText,
+            settings.joinMessage,
+        ]
     );
 
     const removeFromQueue = useCallback(
         (username: string): string => {
             const userEntry = findUserInQueue(username);
             if (!userEntry) {
-                return `${username}, you are not in the queue.`;
+                return settings.notInQueueMessage.replace("{username}", username);
             }
 
             setQueue((prev) => prev.filter((entry) => entry.username.toLowerCase() !== username.toLowerCase()));
 
             return settings.leaveMessage.replace("{username}", username);
         },
-        [findUserInQueue, settings.leaveMessage]
+        [findUserInQueue, settings.leaveMessage, settings.notInQueueMessage]
     );
 
     const getPosition = useCallback(
         (username: string): string => {
             const position = getUserPosition(username);
             if (position === -1) {
-                return `${username}, you are not in the queue.`;
+                return settings.notInQueueMessage.replace("{username}", username);
             }
 
             const userEntry = findUserInQueue(username);
             const waitTime = userEntry ? Math.floor((Date.now() - userEntry.joinedAt.getTime()) / (1000 * 60)) : 0;
 
-            return `${username}, you are position ${position} in the queue. Wait time: ${waitTime} minutes.`;
+            return settings.positionMessage
+                .replace("{username}", username)
+                .replace("{position}", position.toString())
+                .replace("{waitTime}", waitTime.toString());
         },
-        [getUserPosition, findUserInQueue]
+        [getUserPosition, findUserInQueue, settings.notInQueueMessage, settings.positionMessage]
     );
 
     const processCommand = useCallback(

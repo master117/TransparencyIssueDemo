@@ -74,8 +74,20 @@ app.whenReady().then(() => {
                         clientId: "",
                     },
                     queue: {
-                        autoConnect: false,
                         saveCredentials: true,
+                        settings: {
+                            isOpen: true,
+                            requireMessage: false,
+                            joinMessage: "{username} has joined the queue! Position: {position}",
+                            leaveMessage: "{username} has left the queue.",
+                            queueFullMessage: "The queue is currently full. Please try again later.",
+                            queueClosedMessage: "The queue is currently closed.",
+                            alreadyInQueueMessage: "{username}, you are already in the queue at position {position}.",
+                            notInQueueMessage: "{username}, you are not in the queue.",
+                            positionMessage: "{username}, you are position {position} in the queue. Wait time: {waitTime} minutes.",
+                            requireMessageText: "{username}, please provide a message when joining the queue. Example: !join YourGameUsername",
+                            maxQueueSize: 50,
+                        },
                     },
                 };
                 return JSON.stringify(defaultConfig, null, 2);

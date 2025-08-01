@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { QueueEntry, QueueSettings } from "../types/queue";
+import { DEFAULT_SETTINGS } from "../hooks/useQueue";
 import styles from "../assets/queue-management.module.scss";
 
 interface QueueManagementProps {
@@ -25,6 +26,19 @@ const QueueManagement: React.FC<QueueManagementProps> = ({
 }) => {
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+    // Helper function to handle input changes and revert to default if empty
+    const handleMessageInputChange = (field: keyof QueueSettings, value: string): void => {
+        if (value.trim() === "") {
+            // Revert to default value if input is empty
+            const defaultValue = DEFAULT_SETTINGS[field];
+            if (typeof defaultValue === "string") {
+                onUpdateSettings({ [field]: defaultValue });
+            }
+        } else {
+            onUpdateSettings({ [field]: value });
+        }
+    };
 
     const formatTime = (date: Date): string => {
         const now = new Date();
@@ -112,7 +126,7 @@ const QueueManagement: React.FC<QueueManagementProps> = ({
                         id="joinMessage"
                         type="text"
                         value={settings.joinMessage}
-                        onChange={(e) => onUpdateSettings({ joinMessage: e.target.value })}
+                        onChange={(e) => handleMessageInputChange("joinMessage", e.target.value)}
                         placeholder="Use {username} and {position} as placeholders"
                     />
                 </div>
@@ -123,7 +137,73 @@ const QueueManagement: React.FC<QueueManagementProps> = ({
                         id="leaveMessage"
                         type="text"
                         value={settings.leaveMessage}
-                        onChange={(e) => onUpdateSettings({ leaveMessage: e.target.value })}
+                        onChange={(e) => handleMessageInputChange("leaveMessage", e.target.value)}
+                        placeholder="Use {username} as placeholder"
+                    />
+                </div>
+
+                <div className={styles.settingGroup}>
+                    <label htmlFor="queueFullMessage">Queue full message:</label>
+                    <input
+                        id="queueFullMessage"
+                        type="text"
+                        value={settings.queueFullMessage}
+                        onChange={(e) => handleMessageInputChange("queueFullMessage", e.target.value)}
+                        placeholder="Message when queue is full"
+                    />
+                </div>
+
+                <div className={styles.settingGroup}>
+                    <label htmlFor="queueClosedMessage">Queue closed message:</label>
+                    <input
+                        id="queueClosedMessage"
+                        type="text"
+                        value={settings.queueClosedMessage}
+                        onChange={(e) => handleMessageInputChange("queueClosedMessage", e.target.value)}
+                        placeholder="Message when queue is closed"
+                    />
+                </div>
+
+                <div className={styles.settingGroup}>
+                    <label htmlFor="alreadyInQueueMessage">Already in queue message:</label>
+                    <input
+                        id="alreadyInQueueMessage"
+                        type="text"
+                        value={settings.alreadyInQueueMessage}
+                        onChange={(e) => handleMessageInputChange("alreadyInQueueMessage", e.target.value)}
+                        placeholder="Use {username} and {position} as placeholders"
+                    />
+                </div>
+
+                <div className={styles.settingGroup}>
+                    <label htmlFor="notInQueueMessage">Not in queue message:</label>
+                    <input
+                        id="notInQueueMessage"
+                        type="text"
+                        value={settings.notInQueueMessage}
+                        onChange={(e) => handleMessageInputChange("notInQueueMessage", e.target.value)}
+                        placeholder="Use {username} as placeholder"
+                    />
+                </div>
+
+                <div className={styles.settingGroup}>
+                    <label htmlFor="positionMessage">Position message:</label>
+                    <input
+                        id="positionMessage"
+                        type="text"
+                        value={settings.positionMessage}
+                        onChange={(e) => handleMessageInputChange("positionMessage", e.target.value)}
+                        placeholder="Use {username}, {position}, and {waitTime} as placeholders"
+                    />
+                </div>
+
+                <div className={styles.settingGroup}>
+                    <label htmlFor="requireMessageText">Require message text:</label>
+                    <input
+                        id="requireMessageText"
+                        type="text"
+                        value={settings.requireMessageText}
+                        onChange={(e) => handleMessageInputChange("requireMessageText", e.target.value)}
                         placeholder="Use {username} as placeholder"
                     />
                 </div>
