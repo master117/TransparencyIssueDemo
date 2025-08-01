@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import tmi from "tmi.js";
 import styles from "../assets/twitch-chat.module.scss";
 import QueueManagement from "./QueueManagement";
@@ -13,12 +13,13 @@ interface ChatMessage {
 }
 
 const TwitchChat: React.FC = () => {
-  const [clientId, setClientId] = useState("");
+  const [botUsername, setBotUsername] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const [channel, setChannel] = useState("");
   const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [client, setClient] = useState<tmi.Client | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Queue management
@@ -57,14 +58,6 @@ const TwitchChat: React.FC = () => {
     }
 
     return null;
-  };
-
-  const sendChatResponse = (responseMessage: string): void => {
-    if (client && responseMessage.trim()) {
-      client.say(`#${channel}`, responseMessage).catch((error) => {
-        console.error("Error sending chat message:", error);
-      });
-    }
   };
 
   const scrollToBottom = (): void => {
@@ -107,12 +100,14 @@ const TwitchChat: React.FC = () => {
         clientConfig = {
           ...baseConfig,
           identity: {
-            username: `bot_${Math.floor(Math.random() * 100000)}`,
+            username: `${botUsername}`,
             password: `oauth:${token}`
           }
         };
+        setConnectionStatus("Connecting with authentication...");
       } else {
         clientConfig = baseConfig;
+        setConnectionStatus("Connecting anonymously (read-only)...");
       }
 
       const twitchClient = new tmi.Client(clientConfig);
@@ -127,9 +122,20 @@ const TwitchChat: React.FC = () => {
         // Process queue commands
         const queueCommand = parseQueueCommand(message, username);
         if (queueCommand) {
+          console.log(`Queue command detected: ${queueCommand.type} from ${username}`);
           const response = processCommandRef.current(queueCommand);
           if (response) {
-            sendChatResponse(response);
+            console.log(`Sending response: ${response}`);
+            // Use the local twitchClient directly instead of state
+            if (twitchClient && response.trim()) {
+              twitchClient.say(`#${cleanChannel}`, response).catch((error) => {
+                console.error("Error sending chat message:", error);
+                // Show user-friendly error message
+                if (error.message && error.message.includes("No response from Twitch")) {
+                  console.warn("Cannot send messages - likely connected anonymously. Please provide an access token to enable chat responses.");
+                }
+              });
+            }
           }
         }
 
@@ -145,10 +151,16 @@ const TwitchChat: React.FC = () => {
 
       twitchClient.on("connected", () => {
         setIsConnected(true);
+        if (accessToken && accessToken.trim()) {
+          setConnectionStatus("Connected and authenticated (can send messages)");
+        } else {
+          setConnectionStatus("Connected anonymously (read-only mode)");
+        }
       });
 
       twitchClient.on("disconnected", () => {
         setIsConnected(false);
+        setConnectionStatus("Disconnected");
       });
 
       // Add error handling
@@ -160,8 +172,18 @@ const TwitchChat: React.FC = () => {
         }
       });
 
-      await twitchClient.connect();
+      console.log("Twitch connect attempt");
+      console.log(twitchClient);
+      await twitchClient.connect().then((data) => {
+            console.log(data)
+        }).catch((err) => {
+            console.log(err)
+        });;
+      console.log(twitchClient);
+
+      console.log("setting client to twitchClient")
       setClient(twitchClient);
+      console.log(client)
     } catch (error) {
       setIsConnected(false);
 
@@ -186,9 +208,11 @@ const TwitchChat: React.FC = () => {
 
   const disconnectFromTwitch = async (): Promise<void> => {
     if (client) {
+      console.log("Disconnect from twitch");
       await client.disconnect();
       setClient(null);
       setIsConnected(false);
+      setConnectionStatus("Disconnected");
       setMessages([]);
     }
   };
@@ -204,30 +228,28 @@ const TwitchChat: React.FC = () => {
       <div className={styles.instructions}>
         <p>
           <strong>Quick Start:</strong>
-          <span> Enter any Twitch channel name and click Connect to start reading chat messages.</span>
+          <span> Enter any Twitch channel name and connect to start reading chat messages.</span>
         </p>
         <p>
-          <span>Once connected, you will see chat messages appear in real-time.</span>
-        </p>
-        <p>
-          <strong>Authentication (Optional):</strong> For rate limiting benefits, get an access token from{" "}
+          <strong>⚠️ Important for Queue Bot:</strong> To enable automatic chat responses for queue commands (!join, !leave, !pos), 
+          you need to authenticate with Twitch. Get an access token from{" "}
           <a href="https://twitchtokengenerator.com/" target="_blank" rel="noreferrer noopener">
             twitchtokengenerator.com
           </a>{" "}
-          with Chat:Read scope.
+          with Chat:Read and Chat:Edit scopes.
         </p>
       </div>
 
       <div className={styles.apiSettings}>
         <h3>API Configuration</h3>
         <div className={styles.inputGroup}>
-          <label htmlFor="clientId">Client ID (Optional):</label>
+          <label htmlFor="botUsername">Username of chat bot (Optional):</label>
           <input
-            id="clientId"
+            id="botUsername"
             type="text"
-            value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
-            placeholder="Your Twitch Client ID"
+            value={botUsername}
+            onChange={(e) => setBotUsername(e.target.value)}
+            placeholder="Your Bot's Username"
             disabled={isConnected}
           />
         </div>
@@ -269,6 +291,10 @@ const TwitchChat: React.FC = () => {
           <button onClick={clearMessages} className={styles.clearBtn}>
             Clear Messages
           </button>
+        </div>
+
+        <div className={styles.statusInfo}>
+          <p><strong>Status:</strong> {connectionStatus}</p>
         </div>
       </div>
 
