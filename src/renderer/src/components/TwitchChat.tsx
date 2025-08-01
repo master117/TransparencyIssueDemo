@@ -24,6 +24,10 @@ const TwitchChat: React.FC = () => {
   // Queue management
   const { queue, settings, processCommand, moveUser, markAsPlaying, markAsNotPlaying, removeUser, clearQueue, updateSettings } = useQueue();
 
+  // Use ref to ensure message handler always has the latest processCommand
+  const processCommandRef = useRef(processCommand);
+  processCommandRef.current = processCommand;
+
   // Queue command processing
   const parseQueueCommand = (message: string, username: string): QueueCommand | null => {
     const trimmed = message.trim().toLowerCase();
@@ -123,7 +127,7 @@ const TwitchChat: React.FC = () => {
         // Process queue commands
         const queueCommand = parseQueueCommand(message, username);
         if (queueCommand) {
-          const response = processCommand(queueCommand);
+          const response = processCommandRef.current(queueCommand);
           if (response) {
             sendChatResponse(response);
           }

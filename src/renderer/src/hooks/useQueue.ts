@@ -40,8 +40,10 @@ export const useQueue = () => {
         return settings.queueFullMessage;
       }
 
-      if (findUserInQueue(username)) {
-        return `${username}, you are already in the queue at position ${getUserPosition(username)}.`;
+      const existingUser = queue.find((entry) => entry.username.toLowerCase() === username.toLowerCase());
+      if (existingUser) {
+        const position = queue.findIndex((entry) => entry.username.toLowerCase() === username.toLowerCase()) + 1;
+        return `${username}, you are already in the queue at position ${position}.`;
       }
 
       if (settings.requireMessage && !message?.trim()) {
@@ -56,12 +58,12 @@ export const useQueue = () => {
         isPlaying: false
       };
 
+      const position = queue.length + 1;
       setQueue((prev) => [...prev, newEntry]);
 
-      const position = queue.length + 1;
       return settings.joinMessage.replace("{username}", username).replace("{position}", position.toString());
     },
-    [queue, settings, findUserInQueue, getUserPosition]
+    [queue, settings]
   );
 
   const removeFromQueue = useCallback(
