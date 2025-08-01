@@ -1,261 +1,261 @@
 /* TwitchChat Component Styles */
 .twitchChat {
-  max-width: 100%;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+    max-width: 100%;
+    padding: 20px;
+    font-family: Arial, sans-serif;
 
-  h2 {
-    color: #9146ff;
-    margin-bottom: 20px;
-  }
+    h2 {
+        color: #9146ff;
+        margin-bottom: 20px;
+    }
 }
 
 .apiSettings {
-  background: #f5f5f5;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
 
-  h3 {
-    margin-top: 0;
-    color: #333;
-  }
+    h3 {
+        margin-top: 0;
+        color: #333;
+    }
 }
 
 .inputGroup {
-  margin-bottom: 15px;
+    margin-bottom: 15px;
 
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
-  }
-
-  input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    box-sizing: border-box;
-
-    &:disabled {
-      background-color: #e9e9e9;
-      cursor: not-allowed;
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
     }
-  }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+
+        &:disabled {
+            background-color: #e9e9e9;
+            cursor: not-allowed;
+        }
+    }
 }
 
 .buttonGroup {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 %button-base {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.3s;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s;
 }
 
 .connectBtn {
-  @extend %button-base;
-  background-color: #9146ff;
-  color: white;
+    @extend %button-base;
+    background-color: #9146ff;
+    color: white;
 
-  &:hover {
-    background-color: #7c3aed;
-  }
+    &:hover {
+        background-color: #7c3aed;
+    }
 }
 
 .disconnectBtn {
-  @extend %button-base;
-  background-color: #dc3545;
-  color: white;
+    @extend %button-base;
+    background-color: #dc3545;
+    color: white;
 
-  &:hover {
-    background-color: #c82333;
-  }
+    &:hover {
+        background-color: #c82333;
+    }
 }
 
 .clearBtn {
-  @extend %button-base;
-  background-color: #6c757d;
-  color: white;
+    @extend %button-base;
+    background-color: #6c757d;
+    color: white;
 
-  &:hover {
-    background-color: #5a6268;
-  }
+    &:hover {
+        background-color: #5a6268;
+    }
 }
 
 .connectionStatus {
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  font-weight: bold;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-weight: bold;
 
-  &.connected {
-    color: #28a745;
-  }
+    &.connected {
+        color: #28a745;
+    }
 
-  &.disconnected {
-    color: #dc3545;
-  }
+    &.disconnected {
+        color: #dc3545;
+    }
 }
 
 .chatContainer {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
 
-  h3 {
-    background-color: #9146ff;
-    color: white;
-    margin: 0;
-    padding: 15px;
-  }
+    h3 {
+        background-color: #9146ff;
+        color: white;
+        margin: 0;
+        padding: 15px;
+    }
 }
 
 .messagesContainer {
-  height: 400px;
-  overflow-y: auto;
-  padding: 10px;
-  background-color: #fafafa;
+    height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #fafafa;
 
-  /* Scrollbar styling for webkit browsers */
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #9146ff;
-    border-radius: 4px;
-
-    &:hover {
-      background: #7c3aed;
+    /* Scrollbar styling for webkit browsers */
+    &::-webkit-scrollbar {
+        width: 8px;
     }
-  }
+
+    &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #9146ff;
+        border-radius: 4px;
+
+        &:hover {
+            background: #7c3aed;
+        }
+    }
 }
 
 .noMessages {
-  text-align: center;
-  color: #666;
-  font-style: italic;
-  padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
 }
 
 .message {
-  padding: 5px 0;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
 
-  &:last-child {
-    border-bottom: none;
-  }
+    &:last-child {
+        border-bottom: none;
+    }
 }
 
 .timestamp {
-  color: #666;
-  font-size: 12px;
-  min-width: 70px;
-  flex-shrink: 0;
+    color: #666;
+    font-size: 12px;
+    min-width: 70px;
+    flex-shrink: 0;
 }
 
 .username {
-  color: #9146ff;
-  font-weight: bold;
-  min-width: 80px;
-  flex-shrink: 0;
+    color: #9146ff;
+    font-weight: bold;
+    min-width: 80px;
+    flex-shrink: 0;
 }
 
 .messageText {
-  flex: 1;
-  word-wrap: break-word;
-  color: black;
+    flex: 1;
+    word-wrap: break-word;
+    color: black;
 }
 
 /* Instructions Component Styles */
 .instructions {
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .instructionsToggle {
-  width: 100%;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.3s;
+    width: 100%;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s;
 
-  &:hover {
-    background-color: #e9ecef;
-  }
+    &:hover {
+        background-color: #e9ecef;
+    }
 }
 
 .instructionsContent {
-  padding: 20px;
-  background-color: white;
+    padding: 20px;
+    background-color: white;
 
-  h4 {
-    margin-top: 0;
-    color: #333;
-  }
-
-  ol,
-  ul {
-    margin-left: 20px;
-  }
-
-  li {
-    margin-bottom: 8px;
-  }
-
-  a {
-    color: #9146ff;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
+    h4 {
+        margin-top: 0;
+        color: #333;
     }
-  }
+
+    ol,
+    ul {
+        margin-left: 20px;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+
+    a {
+        color: #9146ff;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
 
 .warning {
-  background-color: #fff3cd;
-  border: 1px solid #ffeaa7;
-  color: #856404;
-  padding: 15px;
-  border-radius: 4px;
-  margin-top: 15px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 15px;
 }
 
 /* Troubleshooting section styles */
 .troubleshooting {
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  padding: 15px;
-  margin: 15px 0;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 15px 0;
 
-  h4 {
-    margin-top: 0;
-    color: #495057;
-  }
+    h4 {
+        margin-top: 0;
+        color: #495057;
+    }
 }

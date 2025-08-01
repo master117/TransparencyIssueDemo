@@ -1,4 +1,7 @@
-singleQuote: false
-semi: true
-printWidth: 160
-trailingComma: none
+"trailingComma": "es5"
+"tabWidth": 4
+"semi": true
+"singleQuote": false
+"printWidth": 150
+"endOfLine": "crlf"
+"useTabs": false
