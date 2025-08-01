@@ -6,7 +6,6 @@
         "clientId": "your_twitch_client_id"
     },
     "queue": {
-        "autoConnect": false,
         "saveCredentials": true
     }
 }
