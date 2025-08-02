@@ -243,22 +243,25 @@ const TwitchChat: React.FC = () => {
             setClient(twitchClient);
         } catch (error) {
             setIsConnected(false);
+            setConnectionStatus("Disconnected");
+            setClient(null);
+            setMessages([]);
+
+            // Convert error to string for consistent handling
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error("Error:", error);
 
             // More specific error messages
-            if (error instanceof Error) {
-                if (error.message.includes("Login authentication failed")) {
-                    alert("Authentication failed. Please check your access token and try again.");
-                } else if (error.message.includes("No response from Twitch")) {
-                    alert("No response from Twitch. Please check your internet connection.");
-                } else if (error.message.includes("Connection closed")) {
-                    alert("Connection was closed. Please try again.");
-                } else if (error.message.includes("timeout")) {
-                    alert("Connection timeout. Please check your internet connection and try again.");
-                } else {
-                    alert(`Connection error: ${error.message}`);
-                }
+            if (errorMessage.includes("Login authentication failed")) {
+                alert("Authentication failed. Please check your access token and try again.");
+            } else if (errorMessage.includes("No response from Twitch")) {
+                alert("No response from Twitch. Please check your internet connection.");
+            } else if (errorMessage.includes("Connection closed")) {
+                alert("Connection was closed. Please try again.");
+            } else if (errorMessage.includes("timeout")) {
+                alert("Connection timeout. Please check your internet connection and try again.");
             } else {
-                alert("Failed to connect to Twitch. Please try again.");
+                alert(`Connection error: ${errorMessage}`);
             }
         }
     };
