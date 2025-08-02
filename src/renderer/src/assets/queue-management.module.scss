@@ -327,6 +327,7 @@
     flex-shrink: 0;
 }
 
+.copyBtn,
 .playBtn,
 .stopBtn,
 .removeBtn {
@@ -337,6 +338,15 @@
     font-size: 12px;
     font-weight: bold;
     transition: background-color 0.3s;
+}
+
+.copyBtn {
+    background-color: #232fd6;
+    color: white;
+
+    &:hover {
+        background-color: #151fae;
+    }
 }
 
 .playBtn {

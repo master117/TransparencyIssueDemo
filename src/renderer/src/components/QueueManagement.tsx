@@ -374,6 +374,15 @@ const QueueManagement: React.FC<QueueManagementProps> = ({
                                     </div>
                                 </div>
                                 <div className={styles.actions}>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigator.clipboard.writeText(entry.message || "");
+                                        }}
+                                        className={styles.copyBtn}
+                                    >
+                                        Copy Message
+                                    </button>
                                     {!entry.isPlaying ? (
                                         <button
                                             onClick={(e) => {
