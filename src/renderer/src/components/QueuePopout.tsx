@@ -34,7 +34,7 @@ const QueuePopout: React.FC = () => {
 
     useEffect(() => {
         console.log("QueuePopout component mounted");
-        
+
         // Listen for queue updates from the main window
         const handleQueueUpdate = (data: PopoutData): void => {
             console.log("Received queue update:", data);

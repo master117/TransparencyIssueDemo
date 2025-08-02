@@ -26,7 +26,8 @@ const TwitchChat: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Queue management
-    const { queue, settings, processCommand, moveUser, markAsPlaying, markAsNotPlaying, removeUser, clearQueue, updateSettings } = useQueue(queueSettings);
+    const { queue, settings, processCommand, moveUser, markAsPlaying, markAsNotPlaying, removeUser, clearQueue, updateSettings } =
+        useQueue(queueSettings);
 
     // Use ref to ensure message handler always has the latest processCommand
     const processCommandRef = useRef(processCommand);
@@ -45,7 +46,7 @@ const TwitchChat: React.FC = () => {
                 setAccessToken(twitchConfig.accessToken);
                 setChannel(twitchConfig.channel);
                 setSaveCredentials(queueConfig.saveCredentials);
-                
+
                 // Load queue settings
                 setQueueSettings(queueConfig.settings);
             } catch (error) {

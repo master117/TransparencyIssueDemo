@@ -41,7 +41,7 @@ function createWindow(): void {
 
 function createPopoutWindow(): void {
     console.log("Creating popout window...");
-    
+
     if (popoutWindow) {
         console.log("Popout window already exists, focusing...");
         popoutWindow.focus();

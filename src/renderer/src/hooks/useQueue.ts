@@ -25,7 +25,9 @@ const DEFAULT_SETTINGS: QueueSettings = {
 
 export { DEFAULT_SETTINGS };
 
-export const useQueue = (initialSettings?: Partial<QueueSettings>): {
+export const useQueue = (
+    initialSettings?: Partial<QueueSettings>
+): {
     queue: QueueEntry[];
     settings: QueueSettings;
     processCommand: (command: QueueCommand) => string;

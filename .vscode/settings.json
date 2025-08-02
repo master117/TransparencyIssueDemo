@@ -8,5 +8,9 @@
     "[json]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "cSpell.words": ["twitchtokengenerator"]
+    "cSpell.words": [
+        "popout",
+        "runaqueuetool",
+        "twitchtokengenerator"
+    ]
 }

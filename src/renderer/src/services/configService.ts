@@ -38,6 +38,14 @@ const DEFAULT_CONFIG: AppConfig = {
             positionMessage: "{username}, you are position {position} in the queue. Wait time: {waitTime} minutes.",
             requireMessageText: "{username}, please provide a message when joining the queue. Example: !join YourGameUsername",
             maxQueueSize: 50,
+            popoutSettings: {
+                enabled: false,
+                displayCount: 5,
+                showPosition: true,
+                showMessage: true,
+                showWaitTime: true,
+                backgroundOpacity: 0.6,
+            },
         },
     },
 };

@@ -38,7 +38,7 @@ const api = {
     getConfigPath: () => ipcRenderer.invoke("get-config-path"),
     readConfigFile: () => ipcRenderer.invoke("read-config-file"),
     writeConfigFile: (data: string) => ipcRenderer.invoke("write-config-file", data),
-    
+
     // Popout window APIs
     openPopoutWindow: () => ipcRenderer.invoke("open-popout-window"),
     closePopoutWindow: () => ipcRenderer.invoke("close-popout-window"),
