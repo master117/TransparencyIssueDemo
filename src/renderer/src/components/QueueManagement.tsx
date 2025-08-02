@@ -27,6 +27,7 @@ const QueueManagement: React.FC<QueueManagementProps> = ({
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
     const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+    const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
 
     // Helper function to handle input changes and revert to default if empty
     const handleMessageInputChange = (field: keyof QueueSettings, value: string): void => {
@@ -63,6 +64,19 @@ const QueueManagement: React.FC<QueueManagementProps> = ({
             }
         } catch (error) {
             console.error("Failed to handle popout window:", error);
+        }
+    };
+
+    // Handle copying message with temporary feedback
+    const handleCopyMessage = async (entryId: string, message: string): Promise<void> => {
+        try {
+            await navigator.clipboard.writeText(message);
+            setCopiedMessageId(entryId);
+            setTimeout(() => {
+                setCopiedMessageId(null);
+            }, 2000);
+        } catch (error) {
+            console.error("Failed to copy message:", error);
         }
     };
 
@@ -377,11 +391,11 @@ const QueueManagement: React.FC<QueueManagementProps> = ({
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            navigator.clipboard.writeText(entry.message || "");
+                                            handleCopyMessage(entry.id, entry.message || "");
                                         }}
                                         className={styles.copyBtn}
                                     >
-                                        Copy Message
+                                        {copiedMessageId === entry.id ? "Copied!" : "Copy Message"}
                                     </button>
                                     {!entry.isPlaying ? (
                                         <button
