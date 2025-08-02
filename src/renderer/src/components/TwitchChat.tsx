@@ -23,6 +23,7 @@ const TwitchChat: React.FC = () => {
     const [connectionStatus, setConnectionStatus] = useState<string>("Disconnected");
     const [saveCredentials, setSaveCredentials] = useState(true);
     const [queueSettings, setQueueSettings] = useState<QueueSettings | undefined>(undefined);
+    const [errorMessage, setErrorMessage] = useState<string>("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Queue management
@@ -112,8 +113,11 @@ const TwitchChat: React.FC = () => {
     }, [messages]);
 
     const connectToTwitch = async (): Promise<void> => {
+        // Clear any previous error messages
+        setErrorMessage("");
+        
         if (!channel.trim()) {
-            alert("Please enter a channel name");
+            setErrorMessage("Please enter a channel name");
             return;
         }
 
@@ -197,6 +201,7 @@ const TwitchChat: React.FC = () => {
 
             twitchClient.on("connected", async () => {
                 setIsConnected(true);
+                setErrorMessage(""); // Clear any previous errors on successful connection
                 if (botUsername && botUsername.trim() && accessToken && accessToken.trim()) {
                     setConnectionStatus("Connected and authenticated (can send messages)");
                 } else {
@@ -229,9 +234,11 @@ const TwitchChat: React.FC = () => {
             // Add error handling
             twitchClient.on("notice", (_, msgid) => {
                 if (msgid === "msg_channel_suspended") {
-                    alert("Channel is suspended");
+                    setErrorMessage("Channel is suspended");
+                    setConnectionStatus("Disconnected - Channel suspended");
                 } else if (msgid === "no_permission") {
-                    alert("No permission to access this channel");
+                    setErrorMessage("No permission to access this channel");
+                    setConnectionStatus("Disconnected - No permission");
                 }
             });
 
@@ -253,15 +260,15 @@ const TwitchChat: React.FC = () => {
 
             // More specific error messages
             if (errorMessage.includes("Login authentication failed")) {
-                alert("Authentication failed. Please check your access token and try again.");
+                setErrorMessage("Authentication failed. Please check your access token and try again.");
             } else if (errorMessage.includes("No response from Twitch")) {
-                alert("No response from Twitch. Please check your internet connection.");
+                setErrorMessage("No response from Twitch. Please check your internet connection.");
             } else if (errorMessage.includes("Connection closed")) {
-                alert("Connection was closed. Please try again.");
+                setErrorMessage("Connection was closed. Please try again.");
             } else if (errorMessage.includes("timeout")) {
-                alert("Connection timeout. Please check your internet connection and try again.");
+                setErrorMessage("Connection timeout. Please check your internet connection and try again.");
             } else {
-                alert(`Connection error: ${errorMessage}`);
+                setErrorMessage(`Connection error: ${errorMessage}`);
             }
         }
     };
@@ -367,6 +374,15 @@ const TwitchChat: React.FC = () => {
                         <strong>Status:</strong> {connectionStatus}
                     </div>
                 </div>
+
+                {errorMessage && (
+                    <div className={styles.errorMessage}>
+                        <strong>Error:</strong> {errorMessage}
+                        <button onClick={() => setErrorMessage("")} className={styles.closeErrorBtn}>
+                            ×
+                        </button>
+                    </div>
+                )}
 
                 <div className={styles.configOptions}>
                     <label>

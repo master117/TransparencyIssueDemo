@@ -278,3 +278,31 @@
 .configOptions {
     margin-top: 5px;
 }
+
+.errorMessage {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .closeErrorBtn {
+        background: none;
+        border: none;
+        color: #721c24;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 10px;
+        line-height: 1;
+
+        &:hover {
+            color: #491217;
+        }
+    }
+}
