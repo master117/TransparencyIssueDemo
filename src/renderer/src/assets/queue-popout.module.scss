@@ -1,0 +1,64 @@
+.queuePopout {
+    color: white;
+    padding: 16px;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    min-width: 200px;
+    max-width: 400px;
+}
+
+.queueTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 8px;
+}
+
+.emptyQueue {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+    padding: 20px 0;
+}
+
+.queueEntry {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &.playing {
+        background-color: rgba(76, 175, 80, 0.3);
+        border-radius: 4px;
+        padding: 8px;
+        margin: 4px 0;
+    }
+}
+
+.position {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: bold;
+}
+
+.username {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 2px 0;
+}
+
+.message {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    margin: 2px 0;
+}
+
+.waitTime {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+}
