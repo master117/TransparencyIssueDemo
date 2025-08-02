@@ -104,7 +104,7 @@ const TwitchChat: React.FC = () => {
     };
 
     const scrollToBottom = (): void => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
     };
 
     useEffect(() => {
@@ -137,10 +137,10 @@ const TwitchChat: React.FC = () => {
             };
 
             let clientConfig;
-            // If access token is provided, add identity
-            if (accessToken && accessToken.trim()) {
+            // If access token and username is provided, add identity
+            if (botUsername && botUsername.trim() && accessToken && accessToken.trim()) {
                 const token = accessToken.replace("oauth:", "").trim();
-                const username = botUsername.trim() || `bot_${Math.floor(Math.random() * 100000)}`;
+                const username = botUsername.trim();
                 clientConfig = {
                     ...baseConfig,
                     identity: {
@@ -197,7 +197,7 @@ const TwitchChat: React.FC = () => {
 
             twitchClient.on("connected", async () => {
                 setIsConnected(true);
-                if (accessToken && accessToken.trim()) {
+                if (botUsername && botUsername.trim() && accessToken && accessToken.trim()) {
                     setConnectionStatus("Connected and authenticated (can send messages)");
                 } else {
                     setConnectionStatus("Connected anonymously (read-only mode)");
@@ -222,6 +222,8 @@ const TwitchChat: React.FC = () => {
             twitchClient.on("disconnected", () => {
                 setIsConnected(false);
                 setConnectionStatus("Disconnected");
+                setClient(null);
+                setMessages([]);
             });
 
             // Add error handling
@@ -234,20 +236,11 @@ const TwitchChat: React.FC = () => {
             });
 
             console.log("Twitch connect attempt");
-            console.log(twitchClient);
-            await twitchClient
-                .connect()
-                .then((data) => {
-                    console.log(data);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-            console.log(twitchClient);
 
-            console.log("setting client to twitchClient");
+            await twitchClient.connect();
+
+            console.log("Setting client to twitchClient");
             setClient(twitchClient);
-            console.log(client);
         } catch (error) {
             setIsConnected(false);
 
@@ -274,10 +267,6 @@ const TwitchChat: React.FC = () => {
         if (client) {
             console.log("Disconnect from twitch");
             await client.disconnect();
-            setClient(null);
-            setIsConnected(false);
-            setConnectionStatus("Disconnected");
-            setMessages([]);
         }
     };
 
@@ -305,59 +294,57 @@ const TwitchChat: React.FC = () => {
 
     return (
         <div className={styles.twitchChat}>
-            <h2>Twitch Chat Reader</h2>
-
             <div className={styles.instructions}>
-                <p>
-                    <strong>Quick Start:</strong>
-                    <span> Enter any Twitch channel name and connect to start reading chat messages.</span>
-                </p>
-                <p>
-                    <strong>⚠️ Important for Queue Bot:</strong> To enable automatic chat responses for queue commands (!join, !leave, !pos), you need
-                    to authenticate with Twitch. Get an access token from{" "}
+                <div>
+                    Quick Start: Enter any Twitch channel name and connect to start reading chat messages.
+                    <br />
+                    ⚠️ Important for Queue Bot: To enable automatic chat responses for queue commands, you need to authenticate. Get an access token
+                    from{" "}
                     <a href="https://twitchtokengenerator.com/" target="_blank" rel="noreferrer noopener">
                         twitchtokengenerator.com
                     </a>{" "}
-                    with Chat:Read and Chat:Edit scopes.
-                </p>
+                    with Chat:Read and Chat:Edit scopes.{" "}
+                </div>
             </div>
 
             <div className={styles.apiSettings}>
                 <h3>API Configuration</h3>
-                <div className={styles.inputGroup}>
-                    <label htmlFor="botUsername">Username of chat bot (Optional):</label>
-                    <input
-                        id="botUsername"
-                        type="text"
-                        value={botUsername}
-                        onChange={(e) => setBotUsername(e.target.value)}
-                        placeholder="Your Bot's Username"
-                        disabled={isConnected}
-                    />
-                </div>
+                <div className={styles.inputGroups}>
+                    <div className={styles.inputGroup}>
+                        <label htmlFor="botUsername">Chat Bot Username (Optional):</label>
+                        <input
+                            id="botUsername"
+                            type="text"
+                            value={botUsername}
+                            onChange={(e) => setBotUsername(e.target.value)}
+                            placeholder="Your Bot's Username"
+                            disabled={isConnected}
+                        />
+                    </div>
 
-                <div className={styles.inputGroup}>
-                    <label htmlFor="accessToken">Access Token (Optional):</label>
-                    <input
-                        id="accessToken"
-                        type="password"
-                        value={accessToken}
-                        onChange={(e) => setAccessToken(e.target.value)}
-                        placeholder="Your Twitch Access Token"
-                        disabled={isConnected}
-                    />
-                </div>
+                    <div className={styles.inputGroup}>
+                        <label htmlFor="accessToken">Access Token (Optional):</label>
+                        <input
+                            id="accessToken"
+                            type="password"
+                            value={accessToken}
+                            onChange={(e) => setAccessToken(e.target.value)}
+                            placeholder="Your Twitch Access Token"
+                            disabled={isConnected}
+                        />
+                    </div>
 
-                <div className={styles.inputGroup}>
-                    <label htmlFor="channel">Channel Name:</label>
-                    <input
-                        id="channel"
-                        type="text"
-                        value={channel}
-                        onChange={(e) => setChannel(e.target.value)}
-                        placeholder="Enter channel name (without #)"
-                        disabled={isConnected}
-                    />
+                    <div className={styles.inputGroup}>
+                        <label htmlFor="channel">Channel Name:</label>
+                        <input
+                            id="channel"
+                            type="text"
+                            value={channel}
+                            onChange={(e) => setChannel(e.target.value)}
+                            placeholder="Enter channel name (without #)"
+                            disabled={isConnected}
+                        />
+                    </div>
                 </div>
 
                 <div className={styles.buttonGroup}>
@@ -373,29 +360,18 @@ const TwitchChat: React.FC = () => {
                     <button onClick={clearMessages} className={styles.clearBtn}>
                         Clear Messages
                     </button>
-                </div>
-
-                <div className={styles.statusInfo}>
-                    <p>
+                    <div className={`${styles.connectionStatus} ${isConnected ? styles.connected : styles.disconnected}`}>
                         <strong>Status:</strong> {connectionStatus}
-                    </p>
+                    </div>
                 </div>
 
                 <div className={styles.configOptions}>
-                    <h4>Configuration Options</h4>
-                    <div className={styles.checkboxGroup}>
-                        <label>
-                            <input type="checkbox" checked={saveCredentials} onChange={(e) => handleSaveCredentialsChange(e.target.checked)} />
-                            Save credentials to config file
-                        </label>
-                    </div>
+                    <label>
+                        <input type="checkbox" checked={saveCredentials} onChange={(e) => handleSaveCredentialsChange(e.target.checked)} /> Save
+                        credentials to config file on connect
+                    </label>
                 </div>
             </div>
-
-            <div className={`${styles.connectionStatus} ${isConnected ? styles.connected : styles.disconnected}`}>
-                Status: <span>{isConnected ? "Connected" : "Disconnected"}</span>
-            </div>
-
             <div className={styles.chatContainer}>
                 <h3>Chat Messages</h3>
                 <div className={styles.messagesContainer}>

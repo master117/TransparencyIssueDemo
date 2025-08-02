@@ -22,8 +22,14 @@
     }
 }
 
+.inputGroups {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
 .inputGroup {
-    margin-bottom: 15px;
+    min-width: 200px;
 
     label {
         display: block;
@@ -51,6 +57,7 @@
     display: flex;
     gap: 10px;
     margin-top: 20px;
+    align-items: center;
 }
 
 %button-base {
@@ -94,9 +101,6 @@
 }
 
 .connectionStatus {
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 20px;
     font-weight: bold;
 
     &.connected {
@@ -187,10 +191,21 @@
 
 /* Instructions Component Styles */
 .instructions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 20px;
+    padding: 5px;
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
+    text-align: center;
+
+    div {
+        text-align: center;
+        line-height: 1.5;
+    }
 }
 
 .instructionsToggle {
@@ -261,5 +276,5 @@
 }
 
 .configOptions {
-    color: black;
+    margin-top: 5px;
 }
