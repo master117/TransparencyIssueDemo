@@ -94,10 +94,14 @@ const QueuePopout: React.FC = () => {
             ) : (
                 displayedQueue.map((entry, index) => (
                     <div key={entry.id} className={`${styles.queueEntry} ${entry.isPlaying ? styles.playing : ""}`}>
-                        {queueData.settings.popoutSettings.showPosition && <div className={styles.position}>#{index + 1}</div>}
-                        <div className={styles.username}>{entry.username}</div>
+                        <div className={styles.spacedRow}>
+                            <div className={styles.row}>
+                                {queueData.settings.popoutSettings.showPosition && <div className={styles.position}>#{index + 1}</div>}
+                                <div className={styles.username}>{entry.username}</div>
+                            </div>
+                            {queueData.settings.popoutSettings.showWaitTime && <div className={styles.waitTime}>{formatTime(entry.joinedAt)}</div>}
+                        </div>
                         {queueData.settings.popoutSettings.showMessage && entry.message && <div className={styles.message}>{entry.message}</div>}
-                        {queueData.settings.popoutSettings.showWaitTime && <div className={styles.waitTime}>{formatTime(entry.joinedAt)}</div>}
                     </div>
                 ))
             )}

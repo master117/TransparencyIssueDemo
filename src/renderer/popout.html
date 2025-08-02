@@ -3,24 +3,30 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Queue Popout</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
         html {
             background: transparent !important;
             background-color: transparent !important;
+            height: 100%;
         }
 
         body {
+            -webkit-user-select: none;
+            user-select: none;
+            /* app-region: drag; */
             background: transparent !important;
             background-color: transparent !important;
             margin: 0;
             padding: 20px;
-            background: transparent;
             font-family: Arial, sans-serif;
             color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
             overflow: hidden;
+            height: 100%;
+        }
+
+        #popout-root {
+            height: 100%;
         }
     </style>
 </head>
