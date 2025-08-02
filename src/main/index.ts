@@ -53,7 +53,6 @@ function createPopoutWindow(): void {
         height: 600,
         transparent: true,
         frame: false,
-        titleBarStyle: "hidden",
         webPreferences: {
             preload: join(__dirname, "../preload/index.js"),
             sandbox: false,
