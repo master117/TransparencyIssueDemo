@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import tmi from "tmi.js";
 import styles from "../assets/twitch-chat.module.scss";
 import QueueManagement from "./QueueManagement";
+import TwitchInstructions from "./TwitchInstructions";
+import TwitchLogin from "./TwitchLogin";
+import TwitchChatMessages from "./TwitchChatMessages";
 import { useQueue } from "../hooks/useQueue";
 import { QueueCommand, QueueSettings } from "../types/queue";
 import { configService } from "../services/configService";
@@ -24,7 +27,6 @@ const TwitchChat: React.FC = () => {
     const [saveCredentials, setSaveCredentials] = useState(true);
     const [queueSettings, setQueueSettings] = useState<QueueSettings | undefined>(undefined);
     const [errorMessage, setErrorMessage] = useState<string>("");
-    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Queue management
     const { queue, settings, processCommand, moveUser, markAsPlaying, markAsNotPlaying, removeUser, clearQueue, updateSettings } =
@@ -103,14 +105,6 @@ const TwitchChat: React.FC = () => {
 
         return null;
     };
-
-    const scrollToBottom = (): void => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
-    };
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
 
     const connectToTwitch = async (): Promise<void> => {
         // Clear any previous error messages
@@ -304,110 +298,26 @@ const TwitchChat: React.FC = () => {
 
     return (
         <div className={styles.twitchChat}>
-            <div className={styles.instructions}>
-                <div>
-                    Quick Start: Enter any Twitch channel name and connect to start reading chat messages.
-                    <br />
-                    ⚠️ Important for Queue Bot: To enable automatic chat responses for queue commands, you need to authenticate. Get an access token
-                    from{" "}
-                    <a href="https://twitchtokengenerator.com/" target="_blank" rel="noreferrer noopener">
-                        twitchtokengenerator.com
-                    </a>{" "}
-                    with Chat:Read and Chat:Edit scopes.{" "}
-                </div>
-            </div>
+            <TwitchInstructions />
 
-            <div className={styles.apiSettings}>
-                <h3>API Configuration</h3>
-                <div className={styles.inputGroups}>
-                    <div className={styles.inputGroup}>
-                        <label htmlFor="botUsername">Chat Bot Username (Optional):</label>
-                        <input
-                            id="botUsername"
-                            type="text"
-                            value={botUsername}
-                            onChange={(e) => setBotUsername(e.target.value)}
-                            placeholder="Your Bot's Username"
-                            disabled={isConnected}
-                        />
-                    </div>
+            <TwitchLogin
+                botUsername={botUsername}
+                accessToken={accessToken}
+                channel={channel}
+                isConnected={isConnected}
+                connectionStatus={connectionStatus}
+                saveCredentials={saveCredentials}
+                errorMessage={errorMessage}
+                onBotUsernameChange={setBotUsername}
+                onAccessTokenChange={setAccessToken}
+                onChannelChange={setChannel}
+                onConnect={connectToTwitch}
+                onDisconnect={disconnectFromTwitch}
+                onSaveCredentialsChange={handleSaveCredentialsChange}
+                onClearError={() => setErrorMessage("")}
+            />
 
-                    <div className={styles.inputGroup}>
-                        <label htmlFor="accessToken">Access Token (Optional):</label>
-                        <input
-                            id="accessToken"
-                            type="password"
-                            value={accessToken}
-                            onChange={(e) => setAccessToken(e.target.value)}
-                            placeholder="Your Twitch Access Token"
-                            disabled={isConnected}
-                        />
-                    </div>
-
-                    <div className={styles.inputGroup}>
-                        <label htmlFor="channel">Channel Name:</label>
-                        <input
-                            id="channel"
-                            type="text"
-                            value={channel}
-                            onChange={(e) => setChannel(e.target.value)}
-                            placeholder="Enter channel name (without #)"
-                            disabled={isConnected}
-                        />
-                    </div>
-                </div>
-
-                <div className={styles.buttonGroup}>
-                    {!isConnected ? (
-                        <button onClick={connectToTwitch} className={styles.connectBtn}>
-                            Connect to Chat
-                        </button>
-                    ) : (
-                        <button onClick={disconnectFromTwitch} className={styles.disconnectBtn}>
-                            Disconnect
-                        </button>
-                    )}
-                    <button onClick={clearMessages} className={styles.clearBtn}>
-                        Clear Messages
-                    </button>
-                    <div className={`${styles.connectionStatus} ${isConnected ? styles.connected : styles.disconnected}`}>
-                        <strong>Status:</strong> {connectionStatus}
-                    </div>
-                </div>
-
-                {errorMessage && (
-                    <div className={styles.errorMessage}>
-                        <strong>Error:</strong> {errorMessage}
-                        <button onClick={() => setErrorMessage("")} className={styles.closeErrorBtn}>
-                            ×
-                        </button>
-                    </div>
-                )}
-
-                <div className={styles.configOptions}>
-                    <label>
-                        <input type="checkbox" checked={saveCredentials} onChange={(e) => handleSaveCredentialsChange(e.target.checked)} /> Save
-                        credentials to config file on connect
-                    </label>
-                </div>
-            </div>
-            <div className={styles.chatContainer}>
-                <h3>Chat Messages</h3>
-                <div className={styles.messagesContainer}>
-                    {messages.length === 0 ? (
-                        <div className={styles.noMessages}>No messages yet. Connect to a channel to start reading chat!</div>
-                    ) : (
-                        messages.map((msg) => (
-                            <div key={msg.id} className={styles.message}>
-                                <span className={styles.timestamp}>{msg.timestamp.toLocaleTimeString()}</span>
-                                <span className={styles.username}>{msg.username}:</span>
-                                <span className={styles.messageText}>{msg.message}</span>
-                            </div>
-                        ))
-                    )}
-                    <div ref={messagesEndRef} />
-                </div>
-            </div>
+            <TwitchChatMessages messages={messages} onClearMessages={clearMessages} />
 
             <QueueManagement
                 queue={queue}
