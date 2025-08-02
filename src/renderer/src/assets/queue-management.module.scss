@@ -11,7 +11,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
 
@@ -45,9 +45,28 @@
 }
 
 .controls {
+    margin-bottom: 20px;
+}
+
+.buttonsAndSettings {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.buttonGroup {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+}
+
+.quickSetting {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    input[type="checkbox"] {
+        margin: 0;
+    }
 }
 
 .toggleBtn {
@@ -94,6 +113,40 @@
     &:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+    }
+}
+
+.settingsAccordion {
+    margin-bottom: 20px;
+}
+
+.accordionToggle {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #e9ecef;
+    }
+}
+
+.accordionContent {
+    background: #f8f9fa;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+
+    h4 {
+        margin: 0 0 15px 0;
+        color: #333;
     }
 }
 

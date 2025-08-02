@@ -109,7 +109,7 @@ const TwitchChat: React.FC = () => {
     const connectToTwitch = async (): Promise<void> => {
         // Clear any previous error messages
         setErrorMessage("");
-        
+
         if (!channel.trim()) {
             setErrorMessage("Please enter a channel name");
             return;
