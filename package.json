@@ -23,8 +23,7 @@
     "dependencies": {
         "@electron-toolkit/preload": "^3.0.2",
         "@electron-toolkit/utils": "^4.0.0",
-        "@types/tmi.js": "^1.8.6",
-        "tmi.js": "^1.8.5"
+        "@types/tmi.js": "^1.8.6"
     },
     "devDependencies": {
         "@electron-toolkit/eslint-config-prettier": "^3.0.0",

@@ -63,15 +63,6 @@ const QueuePopout: React.FC = () => {
         };
     }, []);
 
-    const formatTime = (date: Date): string => {
-        const now = new Date();
-        const diff = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-        if (diff < 60) return `${diff}m`;
-        const hours = Math.floor(diff / 60);
-        const minutes = diff % 60;
-        return `${hours}h ${minutes}m`;
-    };
-
     const displayedQueue = queueData.queue.slice(0, queueData.settings.popoutSettings.displayCount);
 
     console.log("Rendering QueuePopout with:", {
@@ -88,23 +79,7 @@ const QueuePopout: React.FC = () => {
                 backgroundColor: `rgba(0, 0, 0, ${queueData.settings.popoutSettings.backgroundOpacity})`,
             }}
         >
-            <div className={styles.queueTitle}>Queue ({queueData.queue.length})</div>
-            {displayedQueue.length === 0 ? (
-                <div className={styles.emptyQueue}>{queueData.queue.length === 0 ? "Queue is empty" : "Popout window initialized"}</div>
-            ) : (
-                displayedQueue.map((entry, index) => (
-                    <div key={entry.id} className={`${styles.queueEntry} ${entry.isPlaying ? styles.playing : ""}`}>
-                        <div className={styles.spacedRow}>
-                            <div className={styles.row}>
-                                {queueData.settings.popoutSettings.showPosition && <div className={styles.position}>#{index + 1}</div>}
-                                <div className={styles.username}>{entry.username}</div>
-                            </div>
-                            {queueData.settings.popoutSettings.showWaitTime && <div className={styles.waitTime}>{formatTime(entry.joinedAt)}</div>}
-                        </div>
-                        {queueData.settings.popoutSettings.showMessage && entry.message && <div className={styles.message}>{entry.message}</div>}
-                    </div>
-                ))
-            )}
+            <div className={styles.queueTitle}>TEST</div>
         </div>
     );
 };
