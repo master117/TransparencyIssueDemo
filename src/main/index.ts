@@ -53,6 +53,10 @@ function createPopoutWindow(): void {
         height: 600,
         transparent: true,
         frame: false,
+        skipTaskbar: true,  // Hide from taskbar
+        hasShadow: false,   // Disable window shadow
+        titleBarStyle: 'hidden',
+        titleBarOverlay: false,
         webPreferences: {
             preload: join(__dirname, "../preload/index.js"),
             sandbox: false,
@@ -60,6 +64,24 @@ function createPopoutWindow(): void {
     });
 
     console.log("Popout window created");
+
+    // Add blur/focus event handlers to fix the titlebar issue
+    // This is a workaround for the known Electron issue
+    popoutWindow.on("blur", () => {
+        if (popoutWindow && !popoutWindow.isDestroyed()) {
+            const [width, height] = popoutWindow.getSize();
+            popoutWindow.setSize(width, height + 1);
+            popoutWindow.setSize(width, height);
+        }
+    });
+
+    popoutWindow.on("focus", () => {
+        if (popoutWindow && !popoutWindow.isDestroyed()) {
+            const [width, height] = popoutWindow.getSize();
+            popoutWindow.setSize(width, height + 1);
+            popoutWindow.setSize(width, height);
+        }
+    });
 
     popoutWindow.on("closed", () => {
         console.log("Popout window closed");
